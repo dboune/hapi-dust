@@ -22,7 +22,14 @@ module.exports = {
       var compiled = dust.compileFn(template, options && options.name)
 
       callback(null, function(context, options, callback) {
-        compiled(context, callback)
+
+        if (options && options.stream === true) {
+          var stream = dust.stream(options.name, context);
+          callback(null, stream)
+        } else {
+          compiled(context, callback)
+        }
+
       })
     },
 
