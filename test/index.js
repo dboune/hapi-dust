@@ -2,7 +2,7 @@
 
 var Code = require('code');
 var Hapi = require('hapi');
-var HapiDust = require('..');
+var HapiDust = require('..')();
 var Hoek = require('hoek');
 var Lab = require('lab');
 var Vision = require('vision');

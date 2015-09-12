@@ -1,6 +1,6 @@
 // Load modules
 
-var Dust = require('dustjs-helpers');
+var Dust;
 
 // Declare internals
 
@@ -26,12 +26,16 @@ internals.render = function (tmpl) {
     };
 };
 
+// Declare externals
+var externals = {};
+
+
 // Declare module
 
-exports.module = {};
+externals.module = {};
 
 
-exports.module.compile = function (template, options, callback) {
+externals.module.compile = function (template, options, callback) {
 
     try {
         var tmpl = Dust.compileFn(template, options.filename);
@@ -44,7 +48,7 @@ exports.module.compile = function (template, options, callback) {
     return callback(null, renderFn);
 };
 
-exports.module.prepare = function (config, next) {
+externals.module.prepare = function (config, next) {
 
     var err = null;
 
@@ -55,12 +59,12 @@ exports.module.prepare = function (config, next) {
     next(err);
 };
 
-exports.module.registerPartial = function (name, src) {
+externals.module.registerPartial = function (name, src) {
 
     var tmpl = Dust.compileFn(src, name);
 };
 
-exports.module.registerHelper = function (name, helper) {
+externals.module.registerHelper = function (name, helper) {
 
     if (helper.length > 1) {
         Dust.helpers[name] = helper;
@@ -69,4 +73,23 @@ exports.module.registerHelper = function (name, helper) {
     }
 };
 
-exports.compileMode = 'async';
+// Set defaults
+
+
+externals.compileMode = 'async';
+
+
+// Factory
+
+exports = module.exports = function (config) {
+
+    if (config && config.dust) {
+        Dust = config.dust;
+    } else if (config && config.loadHelpers) {
+        Dust = require('dustjs-helpers');
+    } else {
+        Dust = require('dustjs-linkedin');
+    }
+
+    return externals;
+};
