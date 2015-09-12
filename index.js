@@ -83,9 +83,11 @@ externals.compileMode = 'async';
 
 exports = module.exports = function (config) {
 
-    if (config && config.dust) {
+    config = config || {};
+
+    if (config.dust) {
         Dust = config.dust;
-    } else if (config && config.loadHelpers) {
+    } else if (config.loadHelpers) {
         Dust = require('dustjs-helpers');
     } else {
         Dust = require('dustjs-linkedin');
