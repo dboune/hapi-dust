@@ -2,7 +2,7 @@
 
 var Code = require('code');
 var Hapi = require('hapi');
-var HapiDust = require('..')();
+var HapiDust = require('..').setConfig({ dust: 'dustjs-helpers' });
 var Hoek = require('hoek');
 var Lab = require('lab');
 var Vision = require('vision');
@@ -18,7 +18,7 @@ var describe = lab.describe;
 var it = lab.it;
 var expect = Code.expect;
 
-describe('Engine', function () {
+describe('Module', function () {
 
     it('is an object', function (done) {
 
@@ -52,21 +52,6 @@ describe('Engine', function () {
 
 });
 
-describe('compile()', function () {
-
-    it('returns a function to the callback', function (done) {
-
-        var callback = function (err, cb) {
-
-            expect(cb).to.be.a.function();
-            done();
-        };
-
-        HapiDust.module.compile('', {}, callback);
-    });
-
-});
-
 describe('prepare()', function () {
 
     it('returns an error if compileMode is not async', function (done) {
@@ -75,6 +60,24 @@ describe('prepare()', function () {
 
             expect(err).to.be.an.object();
             done();
+        });
+    });
+
+});
+
+describe('compile()', function () {
+
+    it('returns a function to the callback', function (done) {
+
+        HapiDust.module.prepare({ compileMode: 'async' }, function () {
+
+            var callback = function (err, cb) {
+
+                expect(cb).to.be.a.function();
+                done();
+            };
+
+            HapiDust.module.compile('', {}, callback);
         });
     });
 
@@ -128,7 +131,7 @@ describe('registerHelper()', function () {
     });
 });
 
-describe('Rendering', function () {
+describe('Engine', function () {
 
     it('renders view', function (done) {
 
