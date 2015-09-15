@@ -26,9 +26,15 @@ describe('Engine', function () {
         done();
     });
 
+    it('has a config method', function (done) {
+
+        expect(HapiDust.module.config).to.be.a.function();
+        done();
+    });
+
     it('has a compile method', function (done) {
 
-        expect(HapiDust.module.compile).to.be.an.function();
+        expect(HapiDust.module.compile).to.be.a.function();
         done();
     });
 
@@ -52,21 +58,6 @@ describe('Engine', function () {
 
 });
 
-describe('compile()', function () {
-
-    it('returns a function to the callback', function (done) {
-
-        var callback = function (err, cb) {
-
-            expect(cb).to.be.a.function();
-            done();
-        };
-
-        HapiDust.module.compile('', {}, callback);
-    });
-
-});
-
 describe('prepare()', function () {
 
     it('returns an error if compileMode is not async', function (done) {
@@ -75,6 +66,24 @@ describe('prepare()', function () {
 
             expect(err).to.be.an.object();
             done();
+        });
+    });
+
+});
+
+describe('compile()', function () {
+
+    it('returns a function to the callback', function (done) {
+
+        HapiDust.module.prepare({ compileMode: 'async' }, function () {
+
+            var callback = function (err, cb) {
+
+                expect(cb).to.be.a.function();
+                done();
+            };
+
+            HapiDust.module.compile('', {}, callback);
         });
     });
 
@@ -400,7 +409,5 @@ describe('Rendering', function () {
             done();
         });
     });
-
-
 
 });

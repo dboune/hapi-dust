@@ -1,11 +1,15 @@
 // Load modules
 
-var Dust = require('dustjs-helpers');
+var Dust;
+var Hoek = require('hoek');
 
 // Declare internals
 
 var internals = {};
 
+internals.config = {
+    dust: 'dustjs-linkedin'
+};
 
 internals.render = function (compiled) {
 
@@ -32,6 +36,29 @@ internals.render = function (compiled) {
 
 exports.module = {};
 
+exports.module.config = function (config) {
+
+    internals.config = Hoek.applyToDefaults(internals.config, config);
+
+    return exports;
+};
+
+exports.module.prepare = function (config, next) {
+
+    if (config.compileMode !== 'async') {
+        return next(new Error('compileMode must be async for hapi-Dust'));
+    }
+
+    if (Dust === undefined) {
+        try {
+            Dust = require(internals.config.dust);
+        } catch (e) {
+            return next(e);
+        }
+    }
+
+    return next();
+};
 
 exports.module.compile = function (template, options, callback) {
 
@@ -44,15 +71,6 @@ exports.module.compile = function (template, options, callback) {
     }
 
     return callback(null, internals.render(compiled));
-};
-
-exports.module.prepare = function (config, next) {
-
-    if (config.compileMode !== 'async') {
-        return next(new Error('compileMode must be async for hapi-Dust'));
-    }
-
-    return next();
 };
 
 exports.module.registerPartial = function (name, src) {
